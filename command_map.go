@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/macrespo42/pokedexcli/internal/pokeapi"
 )
 
 func commandMap(cfg *config) error {
@@ -23,7 +25,7 @@ func commandMap(cfg *config) error {
 		return err
 	}
 
-	var areas LocationArea
+	var areas pokeapi.LocationArea
 	err = json.Unmarshal(body, &areas)
 	if err != nil {
 		return err
@@ -56,7 +58,7 @@ func commandMapb(cfg *config) error {
 		return err
 	}
 
-	var areas LocationArea
+	var areas pokeapi.LocationArea
 	err = json.Unmarshal(body, &areas)
 	if err != nil {
 		return err

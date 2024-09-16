@@ -4,24 +4,14 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+
+	"github.com/macrespo42/pokedexcli/internal/pokeapi"
 )
-
-type Map struct {
-	Name string
-	URL  string
-}
-
-type LocationArea struct {
-	Count    int
-	Next     string
-	Previous string
-	Results  []Map
-}
 
 type config struct {
 	NextUrl     string
 	PreviousUrl string
-	Client      LocationArea
+	Client      pokeapi.LocationArea
 }
 
 type cliCommand struct {
