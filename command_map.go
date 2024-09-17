@@ -9,13 +9,9 @@ import (
 	"github.com/macrespo42/pokedexcli/internal/pokeapi"
 )
 
-func commandMap(cfg *config) error {
+func commandMap(cfg *config, area string) error {
 	var body []byte
 	body, ok := cfg.cache.Get(cfg.NextUrl)
-
-	if ok {
-		fmt.Println("picking inside cache")
-	}
 
 	if !ok {
 		res, err := http.Get(cfg.NextUrl)
@@ -52,7 +48,7 @@ func commandMap(cfg *config) error {
 	return nil
 }
 
-func commandMapb(cfg *config) error {
+func commandMapb(cfg *config, area string) error {
 	var body []byte
 	body, ok := cfg.cache.Get(cfg.PreviousUrl)
 

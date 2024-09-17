@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/macrespo42/pokedexcli/internal/pokeapi"
@@ -20,7 +21,7 @@ type config struct {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(cfg *config) error
+	callback    func(cfg *config, area string) error
 }
 
 func getCommandList() map[string]cliCommand {
@@ -45,6 +46,11 @@ func getCommandList() map[string]cliCommand {
 			description: "Displays the names of 20 location areas, each call displays 20 previous maps.",
 			callback:    commandMapb,
 		},
+		"explore": {
+			name:        "explore",
+			description: "Displays pokemon who lives in the specified area",
+			callback:    commandExplore,
+		},
 	}
 }
 
@@ -61,13 +67,18 @@ func startREPL() {
 		fmt.Print("pokedex > ")
 		scanner := bufio.NewScanner(os.Stdin)
 		scanner.Scan()
-		rawCommand := scanner.Text()
-		command, exist := commandList[rawCommand]
+		rawInput := scanner.Text()
+		args := strings.Split(rawInput, " ")
+		command, exist := commandList[args[0]]
 		if !exist {
-			fmt.Println(rawCommand, "command not found")
+			fmt.Println(rawInput, "command not found")
 			fmt.Println("type 'help' to get a list of available commands")
 		} else {
-			command.callback(cfg)
+			var arg string
+			if len(args) > 1 {
+				arg = args[1]
+			}
+			command.callback(cfg, arg)
 		}
 	}
 }
