@@ -4,14 +4,17 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/macrespo42/pokedexcli/internal/pokeapi"
+	"github.com/macrespo42/pokedexcli/internal/pokecache"
 )
 
 type config struct {
 	NextUrl     string
 	PreviousUrl string
 	Client      pokeapi.LocationArea
+	cache       pokecache.Cache
 }
 
 type cliCommand struct {
@@ -47,9 +50,11 @@ func getCommandList() map[string]cliCommand {
 
 func startREPL() {
 	commandList := getCommandList()
+
 	cfg := &config{
 		NextUrl:     "https://pokeapi.co/api/v2/location-area/",
 		PreviousUrl: "https://pokeapi.co/api/v2/location-area/",
+		cache:       pokecache.NewCache(5 * time.Second),
 	}
 
 	for {

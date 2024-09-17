@@ -10,23 +10,33 @@ import (
 )
 
 func commandMap(cfg *config) error {
-	res, err := http.Get(cfg.NextUrl)
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
+	var body []byte
+	body, ok := cfg.cache.Get(cfg.NextUrl)
 
-	if res.StatusCode > 299 {
-		return fmt.Errorf("Response failed with StatusCode: %d", res.StatusCode)
+	if ok {
+		fmt.Println("picking inside cache")
 	}
 
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return err
+	if !ok {
+		res, err := http.Get(cfg.NextUrl)
+		if err != nil {
+			return err
+		}
+		defer res.Body.Close()
+
+		if res.StatusCode > 299 {
+			return fmt.Errorf("Response failed with StatusCode: %d", res.StatusCode)
+		}
+		body, err = io.ReadAll(res.Body)
+		if err != nil {
+			return err
+		}
+
+		cfg.cache.Add(cfg.NextUrl, body)
 	}
 
 	var areas pokeapi.LocationArea
-	err = json.Unmarshal(body, &areas)
+	err := json.Unmarshal(body, &areas)
 	if err != nil {
 		return err
 	}
@@ -43,23 +53,32 @@ func commandMap(cfg *config) error {
 }
 
 func commandMapb(cfg *config) error {
-	res, err := http.Get(cfg.PreviousUrl)
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
+	var body []byte
+	body, ok := cfg.cache.Get(cfg.PreviousUrl)
 
-	if res.StatusCode > 299 {
-		return fmt.Errorf("Response failed with StatusCode: %d", res.StatusCode)
+	if ok {
+		fmt.Println("picking inside cache")
 	}
 
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return err
+	if !ok {
+		res, err := http.Get(cfg.PreviousUrl)
+		if err != nil {
+			return err
+		}
+		defer res.Body.Close()
+
+		if res.StatusCode > 299 {
+			return fmt.Errorf("Response failed with StatusCode: %d", res.StatusCode)
+		}
+		body, err = io.ReadAll(res.Body)
+		if err != nil {
+			return err
+		}
+		cfg.cache.Add(cfg.PreviousUrl, body)
 	}
 
 	var areas pokeapi.LocationArea
-	err = json.Unmarshal(body, &areas)
+	err := json.Unmarshal(body, &areas)
 	if err != nil {
 		return err
 	}
