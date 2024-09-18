@@ -16,6 +16,7 @@ type config struct {
 	PreviousUrl string
 	Client      pokeapi.LocationArea
 	cache       pokecache.Cache
+	pokedex     map[string]pokeapi.Pokemon
 }
 
 type cliCommand struct {
@@ -51,6 +52,11 @@ func getCommandList() map[string]cliCommand {
 			description: "Displays pokemon who lives in the specified area",
 			callback:    commandExplore,
 		},
+		"catch": {
+			name:        "catch",
+			description: "Try to catch the given pokemon",
+			callback:    commandCatch,
+		},
 	}
 }
 
@@ -61,6 +67,7 @@ func startREPL() {
 		NextUrl:     "https://pokeapi.co/api/v2/location-area/",
 		PreviousUrl: "https://pokeapi.co/api/v2/location-area/",
 		cache:       pokecache.NewCache(5 * time.Second),
+		pokedex:     make(map[string]pokeapi.Pokemon),
 	}
 
 	for {
